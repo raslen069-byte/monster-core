@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "communication",
+			"path": "../../monster browser/communication"
+		},
+		{
+			"name": "my project",
+			"path": ".."
+		}
+	],
+	"settings": {}
+}

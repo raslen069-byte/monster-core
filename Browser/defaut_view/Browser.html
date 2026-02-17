@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser - Complete</title>
+    <link rel="stylesheet" href="Browser.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <div class="browser-window">
+        <!-- Tab Bar -->
+        <div class="tab-bar">
+            <div class="tabs-container" id="tabs-container">
+                <!-- Tabs will be inserted here by JavaScript -->
+            </div>
+            <button class="new-tab-btn" id="new-tab-btn" title="New Tab (Ctrl+T)">
+                <ion-icon name="add"></ion-icon>
+            </button>
+        </div>
+
+        <!-- Navigation Bar -->
+        <div class="nav-bar">
+            <!-- Navigation Buttons -->
+            <button class="nav-btn" id="back-btn" title="Back (Alt+Left)" disabled>
+                <ion-icon name="arrow-back"></ion-icon>
+            </button>
+            <button class="nav-btn" id="forward-btn" title="Forward (Alt+Right)" disabled>
+                <ion-icon name="arrow-forward"></ion-icon>
+            </button>
+            <button class="nav-btn" id="refresh-btn" title="Refresh (F5)">
+                <ion-icon class="refresh-icon" name="refresh"></ion-icon>
+            </button>
+            <button class="nav-btn" id="home-btn" title="Home">
+                <ion-icon name="home"></ion-icon>
+            </button>
+
+            <!-- Address Bar with Search Engine -->
+            <div class="address-bar-container" id="address-bar">
+                <button class="search-engine-btn" id="search-engine-btn" title="Change search engine">
+                    <ion-icon name="search"></ion-icon>
+                </button>
+                <span class="security-icon" id="security-icon">
+                    <ion-icon name="lock-closed"></ion-icon>
+                </span>
+                <input type="text" class="address-input" id="address-input" placeholder="Search or enter address" autocomplete="off">
+                <!-- Clear button -->
+                <button class="clear-search-btn" id="clearSearchBtn" style="display: none;">
+                    <ion-icon name="close"></ion-icon>
+                </button>
+                <!-- Autocomplete Suggestions Dropdown -->
+                <div class="autocomplete-dropdown" id="autocomplete-dropdown">
+                    <!-- Suggestions will be inserted here -->
+                </div>
+                <!-- Search suggestions dropdown -->
+                <div class="search-suggestions" id="searchSuggestions"></div>
+                <button class="voice-search-btn" id="voice-search-btn" title="Voice search">
+                    <ion-icon name="mic"></ion-icon>
+                </button>
+                <button class="star-btn" id="star-btn" title="Bookmark this page">
+                    <ion-icon name="star-outline"></ion-icon>
+                </button>
+                <div class="loading-indicator" id="loading-indicator"></div>
+            </div>
+
+            <!-- Extension Icons -->
+            <div class="extensions-area">
+                <div class="extension-icon" id="find-ext" title="Find in Page (Ctrl+F)">
+                    <ion-icon name="search"></ion-icon>
+                </div>
+                <div class="extension-icon" id="reader-ext" title="Reader Mode">
+                    <ion-icon name="reader"></ion-icon>
+                </div>
+                <div class="extension-icon" id="screenshot-ext" title="Take Screenshot">
+                    <ion-icon name="camera"></ion-icon>
+                </div>
+                <div class="extension-icon" id="download-ext" title="Downloads">
+                    <ion-icon name="download"></ion-icon>
+                </div>
+                <div class="extension-icon" id="incognito-ext" title="New Incognito Window">
+                    <ion-icon name="eye-off"></ion-icon>
+                </div>
+            </div>
+
+            <!-- Profile Icon -->
+            <div class="profile-icon" id="profile-icon" title="Profile">
+                <ion-icon name="person-circle"></ion-icon>
+            </div>
+
+            <!-- Menu Button -->
+            <button class="menu-btn" id="menu-btn" title="Customize and control">
+                <ion-icon name="ellipsis-vertical"></ion-icon>
+            </button>
+        </div>
+
+        <!-- Bookmark Bar -->
+        <div class="bookmark-bar" id="bookmark-bar">
+            <!-- Bookmarks will be inserted here by JavaScript -->
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area" id="content-area">
+            <!-- Welcome page or iframes will be shown here -->
+            <!-- Search results container -->
+            <div class="search-results-container" id="searchResultsContainer" style="display: none;">
+                <div class="search-results-header">
+                    <h2 id="searchQueryTitle">Search Results</h2>
+                </div>
+                <div class="search-results-content" id="searchResultsContent">
+                    <!-- Results will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading progress bar -->
+        <div class="loading-progress-bar" id="loadingProgressBar"></div>
+
+        <!-- Status Bar -->
+        <div class="status-bar" id="status-bar"></div>
+    </div>
+
+    <!-- Search Engine Dropdown -->
+    <div class="search-engine-dropdown" id="search-engine-dropdown">
+        <div class="search-engine-option" data-engine="google">
+            <span class="engine-icon">🔍</span>
+            <span>Google</span>
+        </div>
+        <div class="search-engine-option" data-engine="duckduckgo">
+            <span class="engine-icon">🦆</span>
+            <span>DuckDuckGo</span>
+        </div>
+        <div class="search-engine-option" data-engine="bing">
+            <span class="engine-icon">🔷</span>
+            <span>Bing</span>
+        </div>
+        <div class="search-engine-option" data-engine="wikipedia">
+            <span class="engine-icon">📚</span>
+            <span>Wikipedia</span>
+        </div>
+    </div>
+
+    <!-- Find in Page Panel -->
+    <div class="find-panel" id="find-panel">
+        <input type="text" class="find-input" id="find-input" placeholder="Find in page...">
+        <div class="find-controls">
+            <button class="find-btn" id="find-prev" title="Previous">
+                <ion-icon name="chevron-up"></ion-icon>
+            </button>
+            <button class="find-btn" id="find-next" title="Next">
+                <ion-icon name="chevron-down"></ion-icon>
+            </button>
+            <span class="find-count" id="find-count">0/0</span>
+            <button class="find-btn" id="find-close" title="Close">
+                <ion-icon name="close"></ion-icon>
+            </button>
+        </div>
+    </div>
+
+    <!-- Context Menu -->
+    <div class="context-menu" id="context-menu">
+        <div class="context-menu-item" data-action="back">
+            <span class="context-menu-icon"><ion-icon name="arrow-back"></ion-icon></span>
+            <span>Back</span>
+        </div>
+        <div class="context-menu-item" data-action="forward">
+            <span class="context-menu-icon"><ion-icon name="arrow-forward"></ion-icon></span>
+            <span>Forward</span>
+        </div>
+        <div class="context-menu-item" data-action="refresh">
+            <span class="context-menu-icon"><ion-icon name="refresh"></ion-icon></span>
+            <span>Reload</span>
+        </div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" data-action="bookmark">
+            <span class="context-menu-icon"><ion-icon name="bookmark"></ion-icon></span>
+            <span>Bookmark this page</span>
+        </div>
+        <div class="context-menu-item" data-action="save-as">
+            <span class="context-menu-icon"><ion-icon name="save"></ion-icon></span>
+            <span>Save as...</span>
+        </div>
+        <div class="context-menu-item" data-action="print">
+            <span class="context-menu-icon"><ion-icon name="print"></ion-icon></span>
+            <span>Print...</span>
+        </div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" data-action="select-all">
+            <span class="context-menu-icon"><ion-icon name="checkbox"></ion-icon></span>
+            <span>Select All</span>
+        </div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" data-action="view-source">
+            <span class="context-menu-icon"><ion-icon name="code-slash"></ion-icon></span>
+            <span>View Page Source</span>
+        </div>
+        <div class="context-menu-item" data-action="inspect">
+            <span class="context-menu-icon"><ion-icon name="bug"></ion-icon></span>
+            <span>Inspect</span>
+        </div>
+    </div>
+
+    <!-- Dropdown Menu -->
+    <div class="dropdown-menu" id="dropdown-menu">
+        <div class="dropdown-header">
+            <div class="profile-section">
+                <div class="profile-avatar">
+                    <ion-icon name="person"></ion-icon>
+                </div>
+                <div class="profile-info">
+                    <h3>Guest User</h3>
+                    <p>guest@browser.local</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dropdown-section">
+            <div class="section-title">Tabs & Windows</div>
+            <div class="dropdown-item" data-action="new-tab">
+                <span class="dropdown-item-icon"><ion-icon name="add-circle"></ion-icon></span>
+                <span class="dropdown-item-text">New Tab</span>
+                <span class="dropdown-item-shortcut">Ctrl+T</span>
+            </div>
+            <div class="dropdown-item" data-action="new-window">
+                <span class="dropdown-item-icon"><ion-icon name="copy"></ion-icon></span>
+                <span class="dropdown-item-text">New Window</span>
+                <span class="dropdown-item-shortcut">Ctrl+N</span>
+            </div>
+            <div class="dropdown-item" data-action="new-incognito">
+                <span class="dropdown-item-icon"><ion-icon name="eye-off"></ion-icon></span>
+                <span class="dropdown-item-text">New Incognito Tab</span>
+                <span class="dropdown-item-shortcut">Ctrl+Shift+N</span>
+            </div>
+            <div class="dropdown-item" data-action="reopen-closed">
+                <span class="dropdown-item-icon"><ion-icon name="refresh"></ion-icon></span>
+                <span class="dropdown-item-text">Reopen Closed Tab</span>
+                <span class="dropdown-item-shortcut">Ctrl+Shift+T</span>
+            </div>
+        </div>
+
+        <div class="dropdown-section">
+            <div class="section-title">History & Downloads</div>
+            <div class="dropdown-item" data-action="history">
+                <span class="dropdown-item-icon"><ion-icon name="time"></ion-icon></span>
+                <span class="dropdown-item-text">History</span>
+                <span class="dropdown-item-shortcut">Ctrl+H</span>
+            </div>
+            <div class="dropdown-item" data-action="downloads">
+                <span class="dropdown-item-icon"><ion-icon name="download"></ion-icon></span>
+                <span class="dropdown-item-text">Downloads</span>
+                <span class="dropdown-item-shortcut">Ctrl+J</span>
+            </div>
+        </div>
+
+        <div class="dropdown-section">
+            <div class="section-title">Bookmarks</div>
+            <div class="dropdown-item" data-action="bookmarks">
+                <span class="dropdown-item-icon"><ion-icon name="bookmark"></ion-icon></span>
+                <span class="dropdown-item-text">Bookmark This Page</span>
+                <span class="dropdown-item-shortcut">Ctrl+D</span>
+            </div>
+            <div class="dropdown-item" data-action="bookmark-manager">
+                <span class="dropdown-item-icon"><ion-icon name="book"></ion-icon></span>
+                <span class="dropdown-item-text">Bookmark Manager</span>
+                <span class="dropdown-item-shortcut">Ctrl+Shift+O</span>
+            </div>
+        </div>
+
+        <div class="dropdown-section">
+            <div class="section-title">Tools</div>
+            <div class="dropdown-item" data-action="find-in-page">
+                <span class="dropdown-item-icon"><ion-icon name="search"></ion-icon></span>
+                <span class="dropdown-item-text">Find in Page</span>
+                <span class="dropdown-item-shortcut">Ctrl+F</span>
+            </div>
+            <div class="dropdown-item" data-action="zoom">
+                <span class="dropdown-item-icon"><ion-icon name="expand"></ion-icon></span>
+                <span class="dropdown-item-text">Zoom</span>
+                <div class="zoom-controls">
+                    <button class="zoom-btn" id="zoom-out">-</button>
+                    <span class="zoom-level" id="zoom-level">100%</span>
+                    <button class="zoom-btn" id="zoom-in">+</button>
+                </div>
+            </div>
+            <div class="dropdown-item" data-action="fullscreen">
+                <span class="dropdown-item-icon"><ion-icon name="expand"></ion-icon></span>
+                <span class="dropdown-item-text">Full Screen</span>
+                <span class="dropdown-item-shortcut">F11</span>
+            </div>
+            <div class="dropdown-item" data-action="screenshot">
+                <span class="dropdown-item-icon"><ion-icon name="camera"></ion-icon></span>
+                <span class="dropdown-item-text">Take Screenshot</span>
+            </div>
+        </div>
+
+        <div class="dropdown-section">
+            <div class="section-title">More</div>
+            <div class="dropdown-item" data-action="settings">
+                <span class="dropdown-item-icon"><ion-icon name="settings"></ion-icon></span>
+                <span class="dropdown-item-text">Settings</span>
+            </div>
+            <div class="dropdown-item" data-action="extensions">
+                <span class="dropdown-item-icon"><ion-icon name="puzzle"></ion-icon></span>
+                <span class="dropdown-item-text">Extensions</span>
+            </div>
+            <div class="dropdown-item" data-action="passwords">
+                <span class="dropdown-item-icon"><ion-icon name="key"></ion-icon></span>
+                <span class="dropdown-item-text">Passwords</span>
+            </div>
+            <div class="dropdown-item" data-action="help">
+                <span class="dropdown-item-icon"><ion-icon name="help-circle"></ion-icon></span>
+                <span class="dropdown-item-text">Help</span>
+            </div>
+            <div class="context-menu-divider"></div>
+            <div class="dropdown-item" data-action="dev-mode">
+                <span class="dropdown-item-icon"><ion-icon name="code"></ion-icon></span>
+                <span class="dropdown-item-text">Developer Mode</span>
+            </div>
+            <div class="dropdown-item" data-action="secret-mode">
+                <span class="dropdown-item-icon"><ion-icon name="shield-checkmark"></ion-icon></span>
+                <span class="dropdown-item-text">Secret Mode</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Downloads Panel -->
+    <div class="downloads-panel" id="downloads-panel">
+        <div class="downloads-header">
+            <h3>Downloads</h3>
+            <div class="panel-actions">
+                <button class="nav-btn" id="clear-downloads" title="Clear all" style="width:28px;height:28px;">
+                    <ion-icon name="trash"></ion-icon>
+                </button>
+                <button class="nav-btn" id="close-downloads" style="width:28px;height:28px;">
+                    <ion-icon name="close"></ion-icon>
+                </button>
+            </div>
+        </div>
+        <div id="downloads-list">
+            <!-- Download items will be inserted here -->
+        </div>
+    </div>
+
+    <!-- History Panel -->
+    <div class="history-panel" id="history-panel">
+        <div class="history-header">
+            <h3>History</h3>
+            <div class="panel-actions">
+                <button class="nav-btn" id="clear-history" title="Clear browsing data" style="width:28px;height:28px;">
+                    <ion-icon name="trash"></ion-icon>
+                </button>
+                <button class="nav-btn" id="close-history" style="width:28px;height:28px;">
+                    <ion-icon name="close"></ion-icon>
+                </button>
+            </div>
+        </div>
+        <div class="history-search">
+            <input type="text" id="history-search-input" placeholder="Search history...">
+        </div>
+        <div id="history-list">
+            <!-- History items will be inserted here -->
+        </div>
+    </div>
+
+    <!-- Bookmarks Panel -->
+    <div class="bookmarks-panel" id="bookmarks-panel">
+        <div class="bookmarks-header">
+            <h3>Bookmarks</h3>
+            <div class="panel-actions">
+                <button class="nav-btn" id="add-bookmark" title="Add bookmark" style="width:28px;height:28px;">
+                    <ion-icon name="add"></ion-icon>
+                </button>
+                <button class="nav-btn" id="close-bookmarks" style="width:28px;height:28px;">
+                    <ion-icon name="close"></ion-icon>
+                </button>
+            </div>
+        </div>
+        <div id="bookmarks-list">
+            <!-- Bookmarks will be inserted here -->
+        </div>
+    </div>
+
+    <!-- Reader Mode -->
+    <div class="reader-mode" id="reader-mode">
+        <div class="reader-toolbar">
+            <button class="reader-close-btn" id="reader-close">
+                <ion-icon name="close"></ion-icon>
+            </button>
+            <div style="display: flex; gap: 8px;">
+                <button class="zoom-btn" id="reader-font-decrease">A-</button>
+                <button class="zoom-btn" id="reader-font-increase">A+</button>
+                <button class="zoom-btn" id="reader-theme-light" title="Light theme">☀️</button>
+                <button class="zoom-btn" id="reader-theme-dark" title="Dark theme">🌙</button>
+                <button class="zoom-btn" id="reader-theme-sepia" title="Sepia theme">📜</button>
+            </div>
+        </div>
+        <div class="reader-content">
+            <div class="reader-article" id="reader-article">
+                <!-- Article content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Panel -->
+    <div class="settings-panel" id="settings-panel">
+        <div class="settings-header">
+            <h3>Settings</h3>
+            <button class="nav-btn" id="close-settings" style="width:32px;height:32px;">
+                <ion-icon name="close"></ion-icon>
+            </button>
+        </div>
+        <div class="settings-content">
+            <div class="settings-sidebar">
+                <div class="settings-nav-item active" data-section="appearance">Appearance</div>
+                <div class="settings-nav-item" data-section="search">Search Engine</div>
+                <div class="settings-nav-item" data-section="privacy">Privacy & Security</div>
+                <div class="settings-nav-item" data-section="startup">On Startup</div>
+                <div class="settings-nav-item" data-section="downloads">Downloads</div>
+                <div class="settings-nav-item" data-section="advanced">Advanced</div>
+            </div>
+            <div class="settings-main">
+                <!-- Appearance Section -->
+                <div class="settings-section active" id="settings-appearance">
+                    <h4>Appearance</h4>
+                    <div class="setting-item">
+                        <label>Theme</label>
+                        <select id="theme-select">
+                            <option value="light">Light</option>
+                            <option value="dark">Dark</option>
+                            <option value="system">System Default</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <label>Show Home Button</label>
+                        <input type="checkbox" id="show-home-btn" checked>
+                    </div>
+                    <div class="setting-item">
+                        <label>Show Bookmarks Bar</label>
+                        <input type="checkbox" id="show-bookmarks-bar" checked>
+                    </div>
+                    <div class="setting-item">
+                        <label>Zoom Level</label>
+                        <input type="range" id="zoom-range" min="50" max="200" value="100">
+                        <span id="zoom-value">100%</span>
+                    </div>
+                </div>
+
+                <!-- Search Engine Section -->
+                <div class="settings-section" id="settings-search">
+                    <h4>Search Engine</h4>
+                    <div class="setting-item">
+                        <label>Default Search Engine</label>
+                        <select id="default-search-engine">
+                            <option value="google">Google</option>
+                            <option value="duckduckgo">DuckDuckGo</option>
+                            <option value="bing">Bing</option>
+                            <option value="wikipedia">Wikipedia</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <label>Search Suggestions</label>
+                        <input type="checkbox" id="search-suggestions" checked>
+                    </div>
+                </div>
+
+                <!-- Privacy Section -->
+                <div class="settings-section" id="settings-privacy">
+                    <h4>Privacy & Security</h4>
+                    <div class="setting-item">
+                        <label>Do Not Track</label>
+                        <input type="checkbox" id="do-not-track">
+                    </div>
+                    <div class="setting-item">
+                        <label>Block Pop-ups</label>
+                        <input type="checkbox" id="block-popups" checked>
+                    </div>
+                    <div class="setting-item">
+                        <label>Clear History on Exit</label>
+                        <input type="checkbox" id="clear-on-exit">
+                    </div>
+                    <button class="settings-btn" id="clear-browsing-data">Clear Browsing Data</button>
+                </div>
+
+                <!-- Startup Section -->
+                <div class="settings-section" id="settings-startup">
+                    <h4>On Startup</h4>
+                    <div class="setting-item">
+                        <label>
+                            <input type="radio" name="startup" value="newtab" checked>
+                            Open New Tab
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label>
+                            <input type="radio" name="startup" value="home">
+                            Open Home Page
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label>
+                            <input type="radio" name="startup" value="last">
+                            Continue Where You Left Off
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Downloads Section -->
+                <div class="settings-section" id="settings-downloads">
+                    <h4>Downloads</h4>
+                    <div class="setting-item">
+                        <label>Download Location</label>
+                        <input type="text" id="download-location" value="~/Downloads" readonly>
+                        <button class="settings-btn-small">Change</button>
+                    </div>
+                    <div class="setting-item">
+                        <label>Ask where to save files</label>
+                        <input type="checkbox" id="ask-download-location">
+                    </div>
+                </div>
+
+                <!-- Advanced Section -->
+                <div class="settings-section" id="settings-advanced">
+                    <h4>Advanced</h4>
+                    <div class="setting-item">
+                        <label>Hardware Acceleration</label>
+                        <input type="checkbox" id="hardware-acceleration" checked>
+                    </div>
+                    <div class="setting-item">
+                        <label>Enable Experimental Features</label>
+                        <input type="checkbox" id="experimental-features">
+                    </div>
+                    <button class="settings-btn" id="reset-settings">Reset Settings to Default</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Manager Panel -->
+    <div class="passwords-panel" id="passwords-panel">
+        <div class="passwords-header">
+            <h3>Saved Passwords</h3>
+            <div class="panel-actions">
+                <button class="nav-btn" id="add-password" title="Add password" style="width:28px;height:28px;">
+                    <ion-icon name="add"></ion-icon>
+                </button>
+                <button class="nav-btn" id="close-passwords" style="width:28px;height:28px;">
+                    <ion-icon name="close"></ion-icon>
+                </button>
+            </div>
+        </div>
+        <div class="passwords-search">
+            <input type="text" id="passwords-search-input" placeholder="Search passwords...">
+        </div>
+        <div id="passwords-list">
+            <!-- Passwords will be inserted here -->
+        </div>
+    </div>
+
+    <!-- Add Bookmark Dialog -->
+    <div class="dialog-overlay" id="bookmark-dialog-overlay">
+        <div class="dialog" id="bookmark-dialog">
+            <div class="dialog-header">
+                <h3>Add Bookmark</h3>
+                <button class="dialog-close" id="bookmark-dialog-close">
+                    <ion-icon name="close"></ion-icon>
+                </button>
+            </div>
+            <div class="dialog-body">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="bookmark-name" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label>URL</label>
+                    <input type="text" id="bookmark-url" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label>Folder</label>
+                    <select id="bookmark-folder" class="form-input">
+                        <option value="bookmarks-bar">Bookmarks Bar</option>
+                        <option value="other">Other Bookmarks</option>
+                        <option value="mobile">Mobile Bookmarks</option>
+                    </select>
+                </div>
+            </div>
+            <div class="dialog-footer">
+                <button class="btn btn-secondary" id="bookmark-cancel">Cancel</button>
+                <button class="btn btn-primary" id="bookmark-save">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clear Browsing Data Dialog -->
+    <div class="dialog-overlay" id="clear-data-dialog-overlay">
+        <div class="dialog" id="clear-data-dialog">
+            <div class="dialog-header">
+                <h3>Clear Browsing Data</h3>
+                <button class="dialog-close" id="clear-data-dialog-close">
+                    <ion-icon name="close"></ion-icon>
+                </button>
+            </div>
+            <div class="dialog-body">
+                <div class="form-group">
+                    <label>Time Range</label>
+                    <select id="clear-time-range" class="form-input">
+                        <option value="hour">Last Hour</option>
+                        <option value="day">Last 24 Hours</option>
+                        <option value="week">Last 7 Days</option>
+                        <option value="month">Last 4 Weeks</option>
+                        <option value="all">All Time</option>
+                    </select>
+                </div>
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="clear-history-check" checked>
+                        <span>Browsing History</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="clear-cookies-check">
+                        <span>Cookies and Site Data</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="clear-cache-check" checked>
+                        <span>Cached Images and Files</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="clear-passwords-check">
+                        <span>Passwords</span>
+                    </label>
+                </div>
+            </div>
+            <div class="dialog-footer">
+                <button class="btn btn-secondary" id="clear-data-cancel">Cancel</button>
+                <button class="btn btn-primary" id="clear-data-confirm">Clear Data</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Gaming Mode FAB -->
+    <button class="gaming-mode-fab" id="gaming-mode-btn">
+        <ion-icon name="game-controller"></ion-icon>
+        Gaming Mode
+    </button>
+
+    <!-- Ionicons Library -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    
+    <!-- Browser JavaScript -->
+    <script src="Browser.js"></script>
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beautiful Monaco-Style Code Editor</title>
+    <link rel="stylesheet" href="editor.css">
+    <!-- Load Monaco Editor via CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
+</head>
+<body>
+    <!-- Menu bar -->
+    <div class="menu-bar">
+        <div class="menu-item">
+            <span class="menu-title">File</span>
+            <div class="menu-dropdown">
+                <div class="menu-option" id="menu-new-file">New File</div>
+                <div class="menu-option" id="menu-open-file">Open File...</div>
+                <div class="menu-option" id="menu-open-folder">Open Folder...</div>
+                <div class="menu-divider"></div>
+                <div class="menu-option" id="menu-save">Save</div>
+                <div class="menu-option" id="menu-save-as">Save As...</div>
+                <div class="menu-divider"></div>
+                <div class="menu-option" id="menu-close-tab">Close Tab</div>
+                <div class="menu-option" id="menu-close-window">Close Window</div>
+            </div>
+        </div>
+        <div class="menu-item">
+            <span class="menu-title">Edit</span>
+            <div class="menu-dropdown">
+                <div class="menu-option" id="menu-undo">Undo</div>
+                <div class="menu-option" id="menu-redo">Redo</div>
+                <div class="menu-divider"></div>
+                <div class="menu-option" id="menu-cut">Cut</div>
+                <div class="menu-option" id="menu-copy">Copy</div>
+                <div class="menu-option" id="menu-paste">Paste</div>
+                <div class="menu-divider"></div>
+                <div class="menu-option" id="menu-find">Find</div>
+                <div class="menu-option" id="menu-replace">Replace</div>
+            </div>
+        </div>
+        <div class="menu-item">
+            <span class="menu-title">View</span>
+            <div class="menu-dropdown">
+                <div class="menu-option" id="menu-toggle-sidebar">Toggle Sidebar</div>
+                <div class="menu-option" id="menu-toggle-status">Toggle Status Bar</div>
+                <div class="menu-divider"></div>
+                <div class="menu-option" id="menu-zoom-in">Zoom In</div>
+                <div class="menu-option" id="menu-zoom-out">Zoom Out</div>
+                <div class="menu-option" id="menu-reset-zoom">Reset Zoom</div>
+            </div>
+        </div>
+        <div class="menu-item">
+            <span class="menu-title">Run</span>
+            <div class="menu-dropdown">
+                <div class="menu-option" id="menu-run-code">Run Code</div>
+                <div class="menu-option" id="menu-debug">Debug</div>
+            </div>
+        </div>
+        <div class="menu-item">
+            <span class="menu-title">Help</span>
+            <div class="menu-dropdown">
+                <div class="menu-option" id="menu-about">About</div>
+                <div class="menu-option" id="menu-keyboard">Keyboard Shortcuts</div>
+                <div class="menu-option" id="menu-documentation">Documentation</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="editor-container">
+        <!-- Top toolbar -->
+        <div class="toolbar">
+            <div class="logo">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14.5 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V7.5L14.5 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M14 2V8H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M16 13H8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M16 17H8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M10 9H9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                CodeEditor<span class="pro">PRO</span>
+            </div>
+            <div class="controls">
+                <button id="new-file-btn" class="btn btn-icon" title="New File">
+                    <svg width="16" height="16" viewBox="0 0 16 16">
+                        <path fill="currentColor" d="M14 7H9V2H7v5H2v2h5v5h2V9h5z"/>
+                    </svg>
+                </button>
+                <button id="open-file-btn" class="btn btn-icon" title="Open File">
+                    <svg width="16" height="16" viewBox="0 0 16 16">
+                        <path fill="currentColor" d="M9 1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6H9V1z"/>
+                    </svg>
+                </button>
+                <button id="open-folder-btn" class="btn btn-icon" title="Open Folder">
+                    <svg width="16" height="16" viewBox="0 0 16 16">
+                        <path fill="currentColor" d="M14 10V3H6v1h1v7l-2 2v1h8v-1l-2-2z"/>
+                    </svg>
+                </button>
+                <button id="save-btn" class="btn btn-icon" title="Save File">
+                    <svg width="16" height="16" viewBox="0 0 16 16">
+                        <path fill="currentColor" d="M14 12V5H9V2H2v12h12zm-9-1V8h2v3H5zm5 0V8h2v3h-2zM5 7V4h6v3H5z"/>
+                    </svg>
+                </button>
+                <select id="language-select" class="btn">
+                    <option value="javascript">JavaScript</option>
+                    <option value="typescript">TypeScript</option>
+                    <option value="html">HTML</option>
+                    <option value="css">CSS</option>
+                    <option value="python">Python</option>
+                    <option value="java">Java</option>
+                    <option value="cpp">C++</option>
+                    <option value="json">JSON</option>
+                </select>
+                <select id="theme-select" class="btn">
+                    <option value="vs-dark">Dark Theme</option>
+                    <option value="vs">Light Theme</option>
+                    <option value="hc-black">High Contrast</option>
+                </select>
+                <button id="settings-btn" class="btn btn-icon" title="Settings">
+                    <svg width="16" height="16" viewBox="0 0 16 16">
+                        <path fill="currentColor" d="M10.05 8a2.05 2.05 0 1 1-4.1 0 2.05 2.05 0 0 1 4.1 0zM15.08 9.67a1.5 1.5 0 0 0 0-.67l-1.42-2.45a1.5 1.5 0 0 0-.65-.65L10.56.48a1.5 1.5 0 0 0-.67 0L7.44 1.9a1.5 1.5 0 0 0-.65.65L5.37 4.99a1.5 1.5 0 0 0 0 .67L6.79 8.1a1.5 1.5 0 0 0 .65.65l2.45 1.42a1.5 1.5 0 0 0 .67 0l2.45-1.42a1.5 1.5 0 0 0 .65-.65l1.42-2.44zM12.5 8a4.5 4.5 0 1 0-9 0 4.5 4.5 0 0 0 9 0z"/>
+                    </svg>
+                </button>
+                
+                <!-- Hidden file input for opening files -->
+                <input type="file" id="file-input" accept=".txt,.js,.html,.css,.py,.java,.cpp,.json,.ts,.jsx,.tsx" style="display: none;">
+            </div>
+        </div>
+        
+        <!-- Main editor area -->
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="file-tree">
+                    <div class="explorer-header-container">
+                        <h3 class="explorer-header-text">Explorer</h3>
+                        <button id="refresh-files-btn" class="btn-icon-small" title="Refresh Files">
+                            <svg width="12" height="12" viewBox="0 0 16 16">
+                                <path fill="currentColor" d="M8 2.5a5.5 5.5 0 0 0-4.5 2.7 6 6 0 0 0 0 6.6 5.5 5.5 0 0 0 9 0 6 6 0 0 0 0-6.6A5.5 5.5 0 0 0 8 2.5zm0 11a5.5 5.5 0 0 1-4.5-2.7 6 6 0 0 1 0-6.6 5.5 5.5 0 0 1 9 0 6 6 0 0 1 0 6.6A5.5 5.5 0 0 1 8 13.5z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <ul class="file-list">
+                        <li class="file-item active"><span class="file-icon">📄</span> index.html</li>
+                        <li class="file-item"><span class="file-icon">📄</span> script.js</li>
+                        <li class="file-item"><span class="file-icon">📄</span> styles.css</li>
+                        <li class="file-item"><span class="file-icon">📁</span> components</li>
+                        <li class="file-item"><span class="file-icon">📁</span> utils</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="editor-area">
+                <div class="editor-header">
+                    <div class="tabs">
+                        <div class="tab active">
+                            <span class="tab-icon">📄</span>
+                            <span class="tab-title">index.html</span>
+                            <span class="tab-close">×</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="editor-container">
+                    <div id="editor"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Status bar -->
+        <div class="status-bar">
+            <div class="status-left">
+                <div class="status-item" id="file-info">
+                    <span class="status-icon">📄</span>
+                    <span id="file-name">Untitled-1</span>
+                </div>
+                <div class="status-item" id="language-info">
+                    <span class="status-icon">💻</span>
+                    <span id="language-indicator">JavaScript</span>
+                </div>
+                <div class="status-item" id="position-info">
+                    <span class="status-icon">📍</span>
+                    <span id="position-indicator">Ln 1, Col 1</span>
+                </div>
+                <div class="status-item" id="selection-info">
+                    <span class="status-icon">✂️</span>
+                    <span id="selection-indicator">0 chars, 0 lines</span>
+                </div>
+            </div>
+            <div class="status-right">
+                <div class="status-item" id="encoding-info">
+                    <span class="status-icon">⚙️</span>
+                    <span id="encoding-indicator">UTF-8</span>
+                </div>
+                <div class="status-item" id="line-ending-info">
+                    <span class="status-icon">↵</span>
+                    <span id="line-ending-indicator">LF</span>
+                </div>
+                <div class="status-item" id="indentation-info">
+                    <span class="status-icon">↹</span>
+                    <span id="indentation-indicator">Spaces: 2</span>
+                </div>
+                <div class="status-item" id="eol-info">
+                    <span class="status-icon">📊</span>
+                    <span id="stats-indicator">0 words, 1 line</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Editor Settings</h2>
+                <span class="close" id="close-settings">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="settings-section">
+                    <h3>Editor Appearance</h3>
+                    <div class="setting-item">
+                        <label for="font-size">Font Size:</label>
+                        <input type="range" id="font-size" min="10" max="24" value="14">
+                        <span id="font-size-value">14px</span>
+                    </div>
+                    <div class="setting-item">
+                        <label for="tab-size">Tab Size:</label>
+                        <input type="range" id="tab-size" min="1" max="8" value="2">
+                        <span id="tab-size-value">2 spaces</span>
+                    </div>
+                    <div class="setting-item">
+                        <label for="word-wrap">Word Wrap:</label>
+                        <select id="word-wrap">
+                            <option value="off">Off</option>
+                            <option value="on" selected>On</option>
+                            <option value="wordWrapColumn">Word Wrap Column</option>
+                            <option value="bounded">Bounded</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <label for="line-numbers">Line Numbers:</label>
+                        <select id="line-numbers">
+                            <option value="on" selected>On</option>
+                            <option value="off">Off</option>
+                            <option value="relative">Relative</option>
+                            <option value="interval">Interval</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>Features</h3>
+                    <div class="setting-item checkbox-item">
+                        <input type="checkbox" id="minimap" checked>
+                        <label for="minimap">Show Minimap</label>
+                    </div>
+                    <div class="setting-item checkbox-item">
+                        <input type="checkbox" id="smooth-scrolling" checked>
+                        <label for="smooth-scrolling">Smooth Scrolling</label>
+                    </div>
+                    <div class="setting-item checkbox-item">
+                        <input type="checkbox" id="rounded-selection" checked>
+                        <label for="rounded-selection">Rounded Selection</label>
+                    </div>
+                    <div class="setting-item checkbox-item">
+                        <input type="checkbox" id="highlight-active-line" checked>
+                        <label for="highlight-active-line">Highlight Active Line</label>
+                    </div>
+                    <div class="setting-item checkbox-item">
+                        <input type="checkbox" id="bracket-matching" checked>
+                        <label for="bracket-matching">Bracket Matching</label>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>Key Bindings</h3>
+                    <div class="setting-item">
+                        <label for="key-bindings">Key Bindings:</label>
+                        <select id="key-bindings">
+                            <option value="default">Default</option>
+                            <option value="vim">Vim</option>
+                            <option value="emacs">Emacs</option>
+                            <option value="sublime">Sublime Text</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="reset-settings" class="btn">Reset to Defaults</button>
+                <button id="save-settings" class="btn btn-primary">Apply Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Monaco Editor -->
+    <script>
+        // Configure require for Monaco Editor
+        require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' }});
+    </script>
+    <!-- Command Palette -->
+    <div id="command-palette" class="command-palette">
+        <div class="command-palette-container">
+            <div class="command-palette-input-container">
+                <span class="command-palette-icon">🔍</span>
+                <input type="text" id="command-palette-input" class="command-palette-input" placeholder="Type a command...">
+            </div>
+            <div id="command-palette-results" class="command-palette-results"></div>
+        </div>
+    </div>
+
+    <script src="editor.js"></script>
+</body>
+</html>

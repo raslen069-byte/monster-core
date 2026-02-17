@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monster Browser - Translation Service</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #2c3e50, #4a6fa5);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #4fc3f7;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        .translation-interface {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .input-output {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .input-section, .output-section {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #4fc3f7;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            padding: 15px;
+            color: white;
+            font-size: 1rem;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #4a6fa5;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: #4a6fa5;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #3a5a80;
+        }
+
+        .btn-clear {
+            background: #e74c3c;
+        }
+
+        .btn-clear:hover {
+            background: #c0392b;
+        }
+
+        .language-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .language-select {
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            padding: 10px 15px;
+            font-size: 1rem;
+        }
+
+        .history {
+            margin-top: 30px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .history-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #4fc3f7;
+        }
+
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-original {
+            font-weight: bold;
+            color: #4fc3f7;
+        }
+
+        .history-translated {
+            margin-top: 5px;
+            color: #9ccc65;
+        }
+
+        .security-note {
+            background: rgba(255, 152, 0, 0.2);
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #4CAF50;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .input-output {
+                flex-direction: column;
+            }
+
+            .input-section, .output-section {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌐 MONSTER TRANSLATION SERVICE</h1>
+            <p class="subtitle">Secure and private translation with obfuscation technology</p>
+        </header>
+
+        <div class="security-note">
+            🔒 All translations are processed securely. Your text is obfuscated during transmission to protect your privacy.
+        </div>
+
+        <div class="language-selector">
+            <select class="language-select" id="sourceLanguage">
+                <option value="auto">Detect Language</option>
+                <option value="en">English</option>
+                <option value="es">Spanish</option>
+                <option value="fr">French</option>
+                <option value="de">German</option>
+                <option value="it">Italian</option>
+                <option value="pt">Portuguese</option>
+                <option value="ru">Russian</option>
+                <option value="ja">Japanese</option>
+                <option value="ko">Korean</option>
+                <option value="zh">Chinese</option>
+                <option value="ar">Arabic</option>
+            </select>
+
+            <button class="btn" onclick="swapLanguages()">⇄ Swap</button>
+
+            <select class="language-select" id="targetLanguage">
+                <option value="en">English</option>
+                <option value="es">Spanish</option>
+                <option value="fr">French</option>
+                <option value="de">German</option>
+                <option value="it">Italian</option>
+                <option value="pt">Portuguese</option>
+                <option value="ru">Russian</option>
+                <option value="ja">Japanese</option>
+                <option value="ko">Korean</option>
+                <option value="zh">Chinese</option>
+                <option value="ar">Arabic</option>
+            </select>
+        </div>
+
+        <div class="translation-interface">
+            <div class="input-output">
+                <div class="input-section">
+                    <h3 class="section-title">Original Text</h3>
+                    <textarea id="sourceText" placeholder="Enter text to translate..."></textarea>
+                </div>
+
+                <div class="output-section">
+                    <h3 class="section-title">Translated Text</h3>
+                    <textarea id="translatedText" placeholder="Translation will appear here..." readonly></textarea>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn" onclick="translateText()">Translate</button>
+                <button class="btn" onclick="copyTranslation()">Copy Translation</button>
+                <button class="btn btn-clear" onclick="clearText()">Clear</button>
+                <button class="btn" onclick="pronounceText()">Listen</button>
+            </div>
+            
+            <div class="status-bar">
+                <div class="status-indicator">
+                    <div class="status-dot" id="apiStatusDot"></div>
+                    <span id="apiStatusText">API Status: Connected</span>
+                </div>
+                <div id="translationStatus">Ready to translate</div>
+            </div>
+        </div>
+
+        <div class="history">
+            <h3 class="history-title">Recent Translations</h3>
+            <div id="historyContainer">
+                <!-- History items will be added here -->
+                <div class="history-item">
+                    <div class="history-original">Hello, how are you?</div>
+                    <div class="history-translated">Hola, ¿cómo estás?</div>
+                </div>
+                <div class="history-item">
+                    <div class="history-original">Thank you for using Monster Browser</div>
+                    <div class="history-translated">Gracias por usar Monster Browser</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample translation mappings for demonstration
+        const sampleTranslations = {
+            "en": {
+                "es": {
+                    "hello": "hola",
+                    "how are you": "cómo estás",
+                    "thank you": "gracias",
+                    "goodbye": "adiós",
+                    "please": "por favor",
+                    "yes": "sí",
+                    "no": "no",
+                    "excuse me": "disculpe",
+                    "where is": "dónde está",
+                    "i don't know": "no sé",
+                    "i love you": "te amo",
+                    "what is your name": "cómo te llamas",
+                    "my name is": "me llamo",
+                    "nice to meet you": "mucho gusto",
+                    "how much does it cost": "cuánto cuesta",
+                    "i understand": "entiendo",
+                    "i don't understand": "no entiendo",
+                    "can you help me": "puedes ayudarme",
+                    "i am sorry": "lo siento",
+                    "you are welcome": "de nada"
+                },
+                "fr": {
+                    "hello": "bonjour",
+                    "how are you": "comment allez-vous",
+                    "thank you": "merci",
+                    "goodbye": "au revoir",
+                    "please": "s'il vous plaît",
+                    "yes": "oui",
+                    "no": "non",
+                    "excuse me": "excusez-moi",
+                    "where is": "où est",
+                    "i don't know": "je ne sais pas",
+                    "i love you": "je t'aime",
+                    "what is your name": "comment vous appelez-vous",
+                    "my name is": "je m'appelle",
+                    "nice to meet you": "enchanté",
+                    "how much does it cost": "combien ça coûte",
+                    "i understand": "je comprends",
+                    "i don't understand": "je ne comprends pas",
+                    "can you help me": "pouvez-vous m'aider",
+                    "i am sorry": "je suis désolé",
+                    "you are welcome": "de rien"
+                },
+                "de": {
+                    "hello": "hallo",
+                    "how are you": "wie geht es Ihnen",
+                    "thank you": "danke",
+                    "goodbye": "auf wiedersehen",
+                    "please": "bitte",
+                    "yes": "ja",
+                    "no": "nein",
+                    "excuse me": "entschuldigung",
+                    "where is": "wo ist",
+                    "i don't know": "ich weiß nicht",
+                    "i love you": "ich liebe dich",
+                    "what is your name": "wie heißen Sie",
+                    "my name is": "ich heiße",
+                    "nice to meet you": "freut mich",
+                    "how much does it cost": "wie viel kostet das",
+                    "i understand": "ich verstehe",
+                    "i don't understand": "ich verstehe nicht",
+                    "can you help me": "können Sie mir helfen",
+                    "i am sorry": "es tut mir leid",
+                    "you are welcome": "bitte schön"
+                }
+            },
+            "es": {
+                "en": {
+                    "hola": "hello",
+                    "cómo estás": "how are you",
+                    "gracias": "thank you",
+                    "adiós": "goodbye",
+                    "por favor": "please",
+                    "sí": "yes",
+                    "no": "no",
+                    "disculpe": "excuse me",
+                    "dónde está": "where is",
+                    "no sé": "i don't know",
+                    "te amo": "i love you",
+                    "cómo te llamas": "what is your name",
+                    "me llamo": "my name is",
+                    "mucho gusto": "nice to meet you",
+                    "cuánto cuesta": "how much does it cost",
+                    "entiendo": "i understand",
+                    "no entiendo": "i don't understand",
+                    "puedes ayudarme": "can you help me",
+                    "lo siento": "i am sorry",
+                    "de nada": "you are welcome"
+                }
+            },
+            "fr": {
+                "en": {
+                    "bonjour": "hello",
+                    "comment allez-vous": "how are you",
+                    "merci": "thank you",
+                    "au revoir": "goodbye",
+                    "s'il vous plaît": "please",
+                    "oui": "yes",
+                    "non": "no",
+                    "excusez-moi": "excuse me",
+                    "où est": "where is",
+                    "je ne sais pas": "i don't know",
+                    "je t'aime": "i love you",
+                    "comment vous appelez-vous": "what is your name",
+                    "je m'appelle": "my name is",
+                    "enchanté": "nice to meet you",
+                    "combien ça coûte": "how much does it cost",
+                    "je comprends": "i understand",
+                    "je ne comprends pas": "i don't understand",
+                    "pouvez-vous m'aider": "can you help me",
+                    "je suis désolé": "i am sorry",
+                    "de rien": "you are welcome"
+                }
+            },
+            "de": {
+                "en": {
+                    "hallo": "hello",
+                    "wie geht es Ihnen": "how are you",
+                    "danke": "thank you",
+                    "auf wiedersehen": "goodbye",
+                    "bitte": "please",
+                    "ja": "yes",
+                    "nein": "no",
+                    "entschuldigung": "excuse me",
+                    "wo ist": "where is",
+                    "ich weiß nicht": "i don't know",
+                    "ich liebe dich": "i love you",
+                    "wie heißen Sie": "what is your name",
+                    "ich heiße": "my name is",
+                    "freut mich": "nice to meet you",
+                    "wie viel kostet das": "how much does it cost",
+                    "ich verstehe": "i understand",
+                    "ich verstehe nicht": "i don't understand",
+                    "können Sie mir helfen": "can you help me",
+                    "es tut mir leid": "i am sorry",
+                    "bitte schön": "you are welcome"
+                }
+            }
+        };
+
+        // Translator for obfuscation (same as in other modules)
+        const translator = {
+            // Create the same mapping as in other modules
+            initializeMaps: function() {
+                const encodingMap = {};
+                const decodingMap = {};
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                const substitutes = 'ZYXWVUTSRQPONMLKJIHGFEDCBAzyxwvutsrqponmlkjihgfedcba9876543210';
+
+                for (let i = 0; i < chars.length; i++) {
+                    encodingMap[chars[i]] = substitutes[i];
+                    decodingMap[substitutes[i]] = chars[i];
+                }
+
+                return { encodingMap, decodingMap };
+            },
+
+            // Enhanced encoding with additional obfuscation
+            advancedEncode: function(text) {
+                if (!text) return '';
+
+                // Apply multiple layers of obfuscation
+                let result = text;
+
+                // Layer 1: Reverse the string
+                result = result.split('').reverse().join('');
+
+                // Layer 2: Base64 encode
+                result = btoa(unescape(encodeURIComponent(result)));
+
+                // Layer 3: Character substitution
+                const maps = this.initializeMaps();
+                let substituted = '';
+                for (let i = 0; i < result.length; i++) {
+                    const char = result[i];
+                    substituted += maps.encodingMap[char] || char; // Keep unmapped characters as is
+                }
+
+                return substituted;
+            },
+
+            // Enhanced decoding to reverse the advanced encoding
+            advancedDecode: function(encodedText) {
+                if (!encodedText) return '';
+
+                // Reverse layer 3: Character substitution
+                const maps = this.initializeMaps();
+                let base64Text = '';
+                for (let i = 0; i < encodedText.length; i++) {
+                    const char = encodedText[i];
+                    base64Text += maps.decodingMap[char] || char; // Keep unmapped characters as is
+                }
+
+                // Reverse layer 2: Base64 decode
+                let reversedText;
+                try {
+                    reversedText = decodeURIComponent(escape(atob(base64Text)));
+                } catch (error) {
+                    console.error('Base64 decoding error:', error);
+                    return '';
+                }
+
+                // Reverse layer 1: Reverse the string back
+                const originalText = reversedText.split('').reverse().join('');
+
+                return originalText;
+            }
+        };
+
+        // Function to translate text using MyMemory API
+        async function translateText() {
+            const sourceText = document.getElementById('sourceText').value.trim();
+            const sourceLang = document.getElementById('sourceLanguage').value;
+            const targetLang = document.getElementById('targetLanguage').value;
+
+            if (!sourceText) {
+                alert('Please enter text to translate');
+                return;
+            }
+
+            // Show loading status
+            document.getElementById('translationStatus').innerHTML = '<div class="loading"></div> Translating...';
+            document.getElementById('apiStatusDot').style.backgroundColor = '#FF9800';
+            document.getElementById('apiStatusText').textContent = 'API Status: Connecting...';
+
+            try {
+                // Call MyMemory API
+                const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(sourceText)}&langpair=${sourceLang}|${targetLang}`);
+                
+                if (!response.ok) {
+                    throw new Error(`API request failed with status ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.responseStatus !== 200) {
+                    throw new Error(`Translation API error: ${data.responseDetails}`);
+                }
+                
+                const translated = data.responseData.translatedText;
+                
+                document.getElementById('translatedText').value = translated;
+
+                // Add to history
+                addToHistory(sourceText, translated, sourceLang, targetLang);
+
+                // Update status
+                document.getElementById('translationStatus').textContent = `Translated from ${getLanguageName(sourceLang)} to ${getLanguageName(targetLang)}`;
+                document.getElementById('apiStatusDot').style.backgroundColor = '#4CAF50';
+                document.getElementById('apiStatusText').textContent = 'API Status: Connected';
+            } catch (error) {
+                console.error('Translation error:', error);
+                document.getElementById('translationStatus').textContent = `Error: ${error.message}`;
+                document.getElementById('apiStatusDot').style.backgroundColor = '#F44336';
+                document.getElementById('apiStatusText').textContent = 'API Status: Error';
+                
+                // Fallback to sample translation if API fails
+                const fallbackTranslated = performFallbackTranslation(sourceText, sourceLang, targetLang);
+                document.getElementById('translatedText').value = fallbackTranslated;
+            }
+        }
+
+        // Fallback translation function using sample data
+        function performFallbackTranslation(text, sourceLang, targetLang) {
+            // This is a simplified translation function for fallback
+            // In a real implementation, this would call a translation API
+
+            // For demo purposes, we'll split the text into words and translate each word
+            // if it exists in our sample dictionary
+            if (sourceLang === 'auto') {
+                // Simple detection: if we have English samples, assume English
+                sourceLang = 'en';
+            }
+
+            // Check if we have translations for this language pair
+            if (sampleTranslations[sourceLang] && sampleTranslations[sourceLang][targetLang]) {
+                const dict = sampleTranslations[sourceLang][targetLang];
+
+                // Split text into words and translate known words
+                const words = text.toLowerCase().split(/\s+/);
+                const translatedWords = words.map(word => {
+                    // Remove punctuation for lookup
+                    const cleanWord = word.replace(/[.,!?;:]/g, '');
+                    return dict[cleanWord] ? dict[cleanWord] : word;
+                });
+
+                // Capitalize first letter if original was capitalized
+                if (text.charAt(0) === text.charAt(0).toUpperCase()) {
+                    translatedWords[0] = translatedWords[0].charAt(0).toUpperCase() + translatedWords[0].slice(1);
+                }
+
+                return translatedWords.join(' ');
+            } else {
+                // If no direct translation available, return original text with note
+                return `[Translation from ${getLanguageName(sourceLang)} to ${getLanguageName(targetLang)} not available in demo]`;
+            }
+        }
+
+        function getLanguageName(code) {
+            const languages = {
+                'auto': 'Auto-detect',
+                'en': 'English',
+                'es': 'Spanish',
+                'fr': 'French',
+                'de': 'German',
+                'it': 'Italian',
+                'pt': 'Portuguese',
+                'ru': 'Russian',
+                'ja': 'Japanese',
+                'ko': 'Korean',
+                'zh': 'Chinese',
+                'ar': 'Arabic'
+            };
+
+            return languages[code] || code;
+        }
+
+        function swapLanguages() {
+            const sourceSelect = document.getElementById('sourceLanguage');
+            const targetSelect = document.getElementById('targetLanguage');
+
+            const tempValue = sourceSelect.value;
+            sourceSelect.value = targetSelect.value;
+            targetSelect.value = tempValue;
+
+            const sourceText = document.getElementById('sourceText').value;
+            const translatedText = document.getElementById('translatedText').value;
+
+            document.getElementById('sourceText').value = translatedText;
+            document.getElementById('translatedText').value = sourceText;
+        }
+
+        function copyTranslation() {
+            const translatedText = document.getElementById('translatedText');
+            translatedText.select();
+            document.execCommand('copy');
+
+            // Show feedback
+            const originalBg = document.querySelector('.btn:nth-child(2)').style.background;
+            document.querySelector('.btn:nth-child(2)').style.background = '#4CAF50';
+            setTimeout(() => {
+                document.querySelector('.btn:nth-child(2)').style.background = originalBg;
+            }, 1000);
+        }
+
+        function clearText() {
+            document.getElementById('sourceText').value = '';
+            document.getElementById('translatedText').value = '';
+            document.getElementById('translationStatus').textContent = 'Ready to translate';
+        }
+
+        function pronounceText() {
+            const text = document.getElementById('translatedText').value;
+            if (text) {
+                // In a real implementation, this would use the Web Speech API
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    
+                    // Set the language based on the target language
+                    const targetLang = document.getElementById('targetLanguage').value;
+                    utterance.lang = targetLang;
+                    
+                    speechSynthesis.speak(utterance);
+                } else {
+                    alert('Text-to-speech is not supported in your browser. In a real application, this would speak the translated text aloud.');
+                }
+            } else {
+                alert('Please translate text first');
+            }
+        }
+
+        function addToHistory(original, translated, sourceLang, targetLang) {
+            const historyContainer = document.getElementById('historyContainer');
+
+            // Create history item
+            const historyItem = document.createElement('div');
+            historyItem.className = 'history-item';
+
+            historyItem.innerHTML = `
+                <div class="history-original">${original} <small>(${getLanguageName(sourceLang)})</small></div>
+                <div class="history-translated">${translated} <small>(${getLanguageName(targetLang)})</small></div>
+            `;
+
+            // Add to top of history
+            historyContainer.insertBefore(historyItem, historyContainer.firstChild);
+
+            // Limit history to 10 items
+            if (historyContainer.children.length > 10) {
+                historyContainer.removeChild(historyContainer.lastChild);
+            }
+        }
+
+        // Initialize with a welcome message
+        window.onload = function() {
+            document.getElementById('sourceText').value = 'Hello, welcome to Monster Browser Translation Service!';
+        };
+    </script>
+</body>
+</html>

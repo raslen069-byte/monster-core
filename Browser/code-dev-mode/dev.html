@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dev Browser - Ultimate Developer Mode</title>
+    <link rel="stylesheet" href="dev.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="browser-container">
+        <!-- Top Bar -->
+        <div class="title-bar">
+            <div class="window-controls">
+                <span class="control-btn close"><i class="fas fa-times"></i></span>
+                <span class="control-btn minimize"><i class="fas fa-minus"></i></span>
+                <span class="control-btn maximize"><i class="fas fa-square"></i></span>
+            </div>
+            <div class="tab-bar" id="tabBar">
+                <div class="tab active" data-tab-id="1">
+                    <span class="tab-icon"><i class="fas fa-code"></i></span>
+                    <span class="tab-title">Developer Mode</span>
+                    <span class="tab-close"><i class="fas fa-times"></i></span>
+                </div>
+                <div class="tab new-tab" id="newTabBtn">
+                    <span class="tab-icon"><i class="fas fa-plus"></i></span>
+                </div>
+            </div>
+            <div class="profile-menu" id="profileMenu">
+                <i class="fas fa-user-circle"></i>
+            </div>
+        </div>
+
+        <!-- Navigation Bar -->
+        <div class="nav-bar">
+            <div class="nav-buttons">
+                <button class="nav-btn" id="backBtn" title="Back (Alt+Left)">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="nav-btn" id="forwardBtn" title="Forward (Alt+Right)">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <button class="nav-btn" id="refreshBtn" title="Refresh (F5)">
+                    <i class="fas fa-redo"></i>
+                </button>
+                <button class="nav-btn" id="homeBtn" title="Home">
+                    <i class="fas fa-home"></i>
+                </button>
+            </div>
+            
+            <div class="url-bar-container">
+                <div class="url-bar">
+                    <span class="url-icon" id="urlIcon">
+                        <i class="fas fa-lock"></i>
+                    </span>
+                    <input type="text" class="url-input" id="urlInput" placeholder="Search or enter address...">
+                    <!-- Clear button -->
+                    <button class="clear-search-btn" id="clearSearchBtn" style="display: none;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <div class="url-actions">
+                        <button class="url-action-btn" id="bookmarkBtn" title="Bookmark">
+                            <i class="far fa-star"></i>
+                        </button>
+                        <button class="url-action-btn" id="menuBtn" title="More options">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- Search suggestions dropdown -->
+                <div class="search-suggestions" id="searchSuggestions"></div>
+            </div>
+
+            <div class="dev-tools-buttons">
+                <button class="dev-tool-btn" id="consoleBtn" title="Console (F12)">
+                    <i class="fas fa-terminal"></i>
+                </button>
+                <button class="dev-tool-btn" id="inspectorBtn" title="Inspector">
+                    <i class="fas fa-search"></i>
+                </button>
+                <button class="dev-tool-btn" id="debugBtn" title="Debugger">
+                    <i class="fas fa-bug"></i>
+                </button>
+                <button class="dev-tool-btn" id="settingsBtn" title="Settings">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Browser Viewport -->
+            <main class="viewport">
+                <div class="viewport-content" id="viewportContent">
+                    <!-- Welcome Screen - Default Content -->
+                    <div class="welcome-screen">
+                        <div class="bg-animation">
+                            <div class="floating-shape shape-1"></div>
+                            <div class="floating-shape shape-2"></div>
+                            <div class="floating-shape shape-3"></div>
+                        </div>
+                        <div class="welcome-content">
+                            <div class="logo-container">
+                                <div class="logo-glow"></div>
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <h1 class="main-title">
+                                <span class="gradient-text">Developer Browser</span>
+                            </h1>
+                            <p class="subtitle">Your gateway to the web, built for developers</p>
+
+                            <div class="search-container">
+                                <div class="search-box">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <input type="text" class="search-input" id="quickSearch" placeholder="Search or type 'editor'...">
+                                </div>
+                                <div class="search-suggestions">
+                                    <span class="suggestion-item" data-query="editor"><i class="fas fa-file-code"></i> editor</span>
+                                    <span class="suggestion-item" data-query="github"><i class="fab fa-github"></i> github</span>
+                                    <span class="suggestion-item" data-query="stackoverflow"><i class="fab fa-stack-overflow"></i> stackoverflow</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Search results container -->
+                    <div class="dev-search-results" id="devSearchResults" style="display: none;">
+                        <div class="search-results-header">
+                            <h2 id="searchQueryTitle">Search Results</h2>
+                        </div>
+                        <div class="search-results-content" id="searchResultsContent">
+                            <!-- Results will be dynamically inserted here -->
+                        </div>
+                    </div>
+                </div>
+                <!-- Loading Bar -->
+                <div class="loading-bar" id="loadingBar"></div>
+                <!-- Loading progress bar -->
+                <div class="loading-progress-bar" id="loadingProgressBar"></div>
+            </main>
+
+            <!-- Console Panel -->
+            <div class="console-panel" id="consolePanel">
+                <div class="console-header">
+                    <span><i class="fas fa-terminal"></i> Console</span>
+                    <div class="console-actions">
+                        <button class="console-btn" id="clearConsole" title="Clear">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <button class="console-btn" id="closeConsole" title="Close">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="console-output" id="consoleOutput"></div>
+                <div class="console-input-area">
+                    <span class="console-prompt">></span>
+                    <input type="text" class="console-input" id="consoleInput" placeholder="Enter JavaScript command...">
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-left">
+                <span class="status-item" id="statusReady">
+                    <i class="fas fa-check-circle"></i> Ready
+                </span>
+            </div>
+            <div class="status-right">
+                <span class="status-item" id="networkStatus">
+                    <i class="fas fa-wifi"></i> Online
+                </span>
+                <span class="status-item" id="zoomLevel">
+                    <i class="fas fa-search"></i> 100%
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Browser Frame for real browsing -->
+    <iframe id="browserFrame" class="app-frame" style="display: none;" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe>
+
+    <!-- Editor Frame -->
+    <iframe id="editorFrame" class="app-frame" style="display: none;"></iframe>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2><i class="fas fa-cog"></i> Settings</h2>
+                <span class="modal-close" id="closeSettings">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="settings-tabs">
+                    <button class="settings-tab active" data-tab="appearance">
+                        <i class="fas fa-palette"></i> Appearance
+                    </button>
+                    <button class="settings-tab" data-tab="bookmarks">
+                        <i class="fas fa-star"></i> Bookmarks
+                    </button>
+                    <button class="settings-tab" data-tab="history">
+                        <i class="fas fa-history"></i> History
+                    </button>
+                    <button class="settings-tab" data-tab="downloads">
+                        <i class="fas fa-download"></i> Downloads
+                    </button>
+                    <button class="settings-tab" data-tab="privacy">
+                        <i class="fas fa-shield-alt"></i> Privacy
+                    </button>
+                </div>
+                
+                <div class="settings-content">
+                    <!-- Appearance Tab -->
+                    <div class="settings-panel active" id="appearancePanel">
+                        <h3>Theme Selection</h3>
+                        <div class="theme-grid">
+                            <div class="theme-card active" data-theme="indigo">
+                                <div class="theme-preview indigo-preview"></div>
+                                <span>Indigo</span>
+                            </div>
+                            <div class="theme-card" data-theme="ocean">
+                                <div class="theme-preview ocean-preview"></div>
+                                <span>Ocean</span>
+                            </div>
+                            <div class="theme-card" data-theme="forest">
+                                <div class="theme-preview forest-preview"></div>
+                                <span>Forest</span>
+                            </div>
+                            <div class="theme-card" data-theme="sunset">
+                                <div class="theme-preview sunset-preview"></div>
+                                <span>Sunset</span>
+                            </div>
+                            <div class="theme-card" data-theme="midnight">
+                                <div class="theme-preview midnight-preview"></div>
+                                <span>Midnight</span>
+                            </div>
+                            <div class="theme-card" data-theme="cherry">
+                                <div class="theme-preview cherry-preview"></div>
+                                <span>Cherry</span>
+                            </div>
+                        </div>
+                        
+                        <h3>Display Options</h3>
+                        <div class="setting-item">
+                            <label>Font Size</label>
+                            <input type="range" id="fontSizeRange" min="12" max="20" value="14">
+                            <span id="fontSizeValue">14px</span>
+                        </div>
+                        <div class="setting-item checkbox-item">
+                            <input type="checkbox" id="animationsToggle" checked>
+                            <label for="animationsToggle">Enable Animations</label>
+                        </div>
+                    </div>
+                    
+                    <!-- Bookmarks Tab -->
+                    <div class="settings-panel" id="bookmarksPanel">
+                        <div class="bookmarks-header">
+                            <h3>Your Bookmarks</h3>
+                            <button class="btn-primary" id="addBookmarkBtn">
+                                <i class="fas fa-plus"></i> Add Bookmark
+                            </button>
+                        </div>
+                        <div class="bookmarks-list" id="bookmarksList"></div>
+                    </div>
+                    
+                    <!-- History Tab -->
+                    <div class="settings-panel" id="historyPanel">
+                        <div class="history-header">
+                            <h3>Browsing History</h3>
+                            <div class="history-actions">
+                                <input type="text" id="historySearch" placeholder="Search history...">
+                                <button class="btn-danger" id="clearHistoryBtn">
+                                    <i class="fas fa-trash"></i> Clear All
+                                </button>
+                            </div>
+                        </div>
+                        <div class="history-list" id="historyList"></div>
+                    </div>
+                    
+                    <!-- Downloads Tab -->
+                    <div class="settings-panel" id="downloadsPanel">
+                        <div class="downloads-header">
+                            <h3>Downloads</h3>
+                            <button class="btn-primary" id="clearDownloadsBtn">
+                                <i class="fas fa-trash"></i> Clear All
+                            </button>
+                        </div>
+                        <div class="downloads-list" id="downloadsList"></div>
+                    </div>
+                    
+                    <!-- Privacy Tab -->
+                    <div class="settings-panel" id="privacyPanel">
+                        <h3>Privacy Settings</h3>
+                        <div class="setting-item checkbox-item">
+                            <input type="checkbox" id="doNotTrack">
+                            <label for="doNotTrack">Do Not Track</label>
+                        </div>
+                        <div class="setting-item checkbox-item">
+                            <input type="checkbox" id="saveHistory" checked>
+                            <label for="saveHistory">Save Browsing History</label>
+                        </div>
+                        <div class="setting-item checkbox-item">
+                            <input type="checkbox" id="savePasswords">
+                            <label for="savePasswords">Save Passwords</label>
+                        </div>
+                        <button class="btn-danger" id="clearBrowsingData">
+                            <i class="fas fa-trash"></i> Clear Browsing Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Bookmark Modal -->
+    <div class="modal" id="addBookmarkModal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2><i class="fas fa-star"></i> Add Bookmark</h2>
+                <span class="modal-close" id="closeAddBookmark">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="bookmarkName" placeholder="Enter bookmark name">
+                </div>
+                <div class="form-group">
+                    <label>URL</label>
+                    <input type="text" id="bookmarkUrl" placeholder="Enter URL">
+                </div>
+                <div class="form-group">
+                    <label>Folder</label>
+                    <select id="bookmarkFolder">
+                        <option value="default">Default</option>
+                        <option value="favorites">Favorites</option>
+                        <option value="work">Work</option>
+                        <option value="personal">Personal</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelAddBookmark">Cancel</button>
+                <button class="btn-primary" id="saveBookmark">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Tab Modal -->
+    <div class="modal" id="newTabModal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2><i class="fas fa-plus"></i> New Tab</h2>
+                <span class="modal-close" id="closeNewTab">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Tab Name</label>
+                    <input type="text" id="newTabName" placeholder="Enter tab name">
+                </div>
+                <div class="form-group">
+                    <label>URL (optional)</label>
+                    <input type="text" id="newTabUrl" placeholder="Enter URL">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelNewTab">Cancel</button>
+                <button class="btn-primary" id="createNewTab">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Speed Dial Modal -->
+    <div class="modal" id="speedDialModal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2><i class="fas fa-bolt"></i> Add Speed Dial</h2>
+                <span class="modal-close" id="closeSpeedDial">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="speedDialName" placeholder="Enter name">
+                </div>
+                <div class="form-group">
+                    <label>URL</label>
+                    <input type="text" id="speedDialUrl" placeholder="Enter URL">
+                </div>
+                <div class="form-group">
+                    <label>Icon</label>
+                    <select id="speedDialIcon">
+                        <option value="fa-globe">🌐 Globe</option>
+                        <option value="fa-code">💻 Code</option>
+                        <option value="fa-gamepad">🎮 Game</option>
+                        <option value="fa-book">📚 Book</option>
+                        <option value="fa-video">📹 Video</option>
+                        <option value="fa-music">🎵 Music</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelSpeedDial">Cancel</button>
+                <button class="btn-primary" id="saveSpeedDial">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Menu -->
+    <div class="context-menu" id="contextMenu">
+        <div class="context-item" data-action="open">
+            <i class="fas fa-external-link-alt"></i> Open
+        </div>
+        <div class="context-item" data-action="open-new">
+            <i class="fas fa-window-restore"></i> Open in New Tab
+        </div>
+        <div class="context-divider"></div>
+        <div class="context-item" data-action="bookmark">
+            <i class="fas fa-star"></i> Add to Bookmarks
+        </div>
+        <div class="context-divider"></div>
+        <div class="context-item" data-action="copy">
+            <i class="fas fa-copy"></i> Copy Link
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="dev.js"></script>
+</body>
+</html>

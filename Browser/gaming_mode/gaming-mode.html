@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser in Gaming Mode</title>
+    <link rel="stylesheet" href="gaming-mode.css">
+</head>
+<body class="gaming-mode">
+    <div class="particles" id="particles"></div>
+    <div class="gaming-browser-window">
+        <!-- Gaming mode top bar with minimal controls -->
+        <section class="gaming-top-bar" id="gamingTopBar">
+            <div class="gaming-nav-controls">
+                <button id="gamingBackBtn" class="gaming-nav-button"><ion-icon name="chevron-back"></ion-icon></button>
+                <button id="gamingForwardBtn" class="gaming-nav-button"><ion-icon name="chevron-forward"></ion-icon></button>
+                <button id="gamingRefreshBtn" class="gaming-nav-button"><ion-icon name="refresh"></ion-icon></button>
+                <button id="gamingHomeBtn" class="gaming-nav-button"><ion-icon name="home"></ion-icon></button>
+            </div>
+            
+            <!-- Search bar container -->
+            <div class="gaming-search-bar-container">
+                <ion-icon name="search" class="search-icon"></ion-icon>
+                <input type="text" class="gaming-address-bar" id="gamingAddressBar" placeholder="Enter game URL or search...">
+                <button id="clearSearchBtn" class="clear-search-btn" style="display: none;">
+                    <ion-icon name="close"></ion-icon>
+                </button>
+                <!-- Search suggestions dropdown -->
+                <div class="search-suggestions" id="searchSuggestions"></div>
+            </div>
+            
+            <!-- Loading progress bar -->
+            <div class="gaming-progress-bar" id="gamingProgressBar"></div>
+            
+            <button id="gamingFullscreenBtn" class="gaming-nav-button"><ion-icon name="expand"></ion-icon></button>
+            <button id="gamingSettingsBtn" class="gaming-nav-button"><ion-icon name="settings"></ion-icon></button>
+        </section>
+
+        <!-- Content area for games -->
+        <div class="gaming-content-area" id="gamingContentArea">
+            <!-- Overlay shown when no game is loaded -->
+            <div class="gaming-overlay" id="gamingOverlay">
+                <!-- Gaming Mode Logo -->
+                <div class="gaming-logo">
+                    <div class="logo-icon">
+                        <ion-icon name="game-controller"></ion-icon>
+                    </div>
+                    <h1 class="logo-text">GAMING MODE</h1>
+                </div>
+                
+                <p class="overlay-description">Immerse yourself in the ultimate gaming experience</p>
+
+                <!-- Quick Stats -->
+                <div class="quick-stats">
+                    <div class="stat-box">
+                        <ion-icon name="trophy"></ion-icon>
+                        <span class="stat-value" id="highScoreDisplay">0</span>
+                        <span class="stat-label">High Score</span>
+                    </div>
+                    <div class="stat-box">
+                        <ion-icon name="time"></ion-icon>
+                        <span class="stat-value" id="gamesPlayedDisplay">0</span>
+                        <span class="stat-label">Games Played</span>
+                    </div>
+                </div>
+
+                <!-- Main Action Buttons -->
+                <div class="action-buttons">
+                    <button id="playMiniGameBtn" class="mini-game-btn">
+                        <ion-icon name="game-controller"></ion-icon>
+                        Play Mini Game
+                    </button>
+                </div>
+
+                <!-- Search Bar in Overlay -->
+                <div class="overlay-search">
+                    <ion-icon name="search" class="overlay-search-icon"></ion-icon>
+                    <input type="text" class="overlay-search-input" id="overlaySearchInput" placeholder="Search games or enter URL...">
+                </div>
+
+                <div class="divider">
+                    <span>OR</span>
+                </div>
+
+                <p class="popular-text">Popular Gaming Sites</p>
+
+                <div class="gaming-game-list">
+                    <div class="gaming-game-item" data-url="https://www.addictinggames.com/">
+                        <ion-icon name="flame"></ion-icon>
+                        <h3>Addicting Games</h3>
+                        <p>Free online games</p>
+                    </div>
+                    <div class="gaming-game-item" data-url="https://www.kongregate.com/">
+                        <ion-icon name="apps"></ion-icon>
+                        <h3>Kongregate</h3>
+                        <p>Web games and indie titles</p>
+                    </div>
+                    <div class="gaming-game-item" data-url="https://www.coolmathgames.com/">
+                        <ion-icon name="calculator"></ion-icon>
+                        <h3>Cool Math Games</h3>
+                        <p>Educational games</p>
+                    </div>
+                    <div class="gaming-game-item" data-url="https://www.miniclip.com/">
+                        <ion-icon name="pulse"></ion-icon>
+                        <h3>Miniclip</h3>
+                        <p>Classic online games</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Iframe for game content -->
+            <iframe class="gaming-iframe" id="gamingIframe" style="display: none;"></iframe>
+            
+            <!-- Search results container -->
+            <div class="gaming-search-results" id="gamingSearchResults" style="display: none;">
+                <div class="search-results-header">
+                    <h2 id="searchQueryTitle">Search Results</h2>
+                </div>
+                <div class="search-results-content" id="searchResultsContent">
+                    <!-- Results will be dynamically inserted here -->
+                </div>
+            </div>
+            
+            <!-- Built-in Points Collection Game -->
+            <div class="gaming-mini-game" id="gamingMiniGame" style="display: none;">
+                <div class="game-container">
+                    <div class="game-header">
+                        <div class="game-stat">
+                            <span class="stat-label">Score</span>
+                            <span class="stat-value" id="gameScore">0</span>
+                        </div>
+                        <div class="game-stat">
+                            <span class="stat-label">Level</span>
+                            <span class="stat-value" id="gameLevel">1</span>
+                        </div>
+                        <div class="game-stat">
+                            <span class="stat-label">Time</span>
+                            <span class="stat-value" id="gameTime">0s</span>
+                        </div>
+                    </div>
+                    <canvas id="gameCanvas"></canvas>
+                    <div class="game-controls">
+                        <button class="control-btn" id="btnLeft"><ion-icon name="caret-back"></ion-icon></button>
+                        <button class="control-btn" id="btnUp"><ion-icon name="caret-up"></ion-icon></button>
+                        <button class="control-btn" id="btnDown"><ion-icon name="caret-down"></ion-icon></button>
+                        <button class="control-btn" id="btnRight"><ion-icon name="caret-forward"></ion-icon></button>
+                    </div>
+                </div>
+                <div class="game-message" id="gameMessage">
+                    <h3>Collect the Points!</h3>
+                    <p>Use Arrow Keys or Buttons to move</p>
+                    <button id="startGameBtn">Start Game</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Minimap showing current page overview (hidden by default) -->
+        <div class="gaming-minimap" id="gamingMinimap"></div>
+        
+        <!-- Performance panel showing FPS and other metrics (hidden by default) -->
+        <div class="gaming-performance-panel" id="gamingPerformancePanel">
+            <div class="gaming-performance-item">FPS: <span class="gaming-performance-value" id="fpsValue">60</span></div>
+            <div class="gaming-performance-item">Latency: <span class="gaming-performance-value" id="latencyValue">16ms</span></div>
+            <div class="gaming-performance-item">Memory: <span class="gaming-performance-value" id="memoryValue">128MB</span></div>
+        </div>
+        
+        <!-- Shortcut hint -->
+        <div class="gaming-shortcut-hint" id="gamingShortcutHint">
+            Press F11 for fullscreen | Ctrl+R to reload
+        </div>
+    </div>
+<!-- Libraries -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script src='gaming-mode.js'></script>
+</body>
+</html>
