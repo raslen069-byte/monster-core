@@ -1,0 +1,10 @@
+{
+  "status": "online",
+  "version": "2.0.26",
+  "modes": {
+    "default": "https://raslen069-byte.github.io/monster-core/Browser/defaut_view/Browser.html",
+    "gaming": "https://raslen069-byte.github.io/monster-core/Browser/gaming_mode/gaming-mode.html",
+    "dev": "https://raslen069-byte.github.io/monster-core/Browser/code-dev-mode/dev.html"
+  },
+  "authorized_keys": ["4PGRE7", "MONSTER2026"]
+}
